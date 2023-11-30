@@ -7,34 +7,31 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         d:DataContext="{d:DesignInstance Type=view:FunctionsViewModel}"
         mc:Ignorable="d"
-        Title="Окно удаления" Height="326" Width="200" Style="{DynamicResource TitleStyle}" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" Icon="/View/icon.jpg">
-
+        Title="Окно удаления"  Height="300" Width="400" Background="#8443D6"  ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None">
     <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="15"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="9"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+
         <Style TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border CornerRadius="3" Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="FontSize" Value="15"/>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="9"/>
+                </Style>
+            </Style.Resources>
         </Style>
     </Window.Resources>
-
-    <Grid Style="{DynamicResource GridStyle}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
-        <Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource IconStyle}" Command="{Binding BackCommand}" BorderThickness="0" BorderBrush="Transparent">
-            <Image Source="file:///C:/Users/admin/Pictures/31029add2feba58af429.png" Width="40" Height="36" Stretch="UniformToFill" />
-        </Button>
-        <Grid Style="{DynamicResource GridStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150" MaxWidth="150" Height="195" Grid.ColumnSpan="2" Margin="25,0,0,0">
-            <StackPanel Style="{DynamicResource StackPanelStyle}">
-                <TextBlock Text="Выберите ID" VerticalAlignment="Stretch" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" Style="{DynamicResource TextBlockStyle}" Height="30"/>
-                <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource ListBoxStyle}" BorderThickness="1" BorderBrush="Gray" Height="117">
+    <Grid Background="#8443D6">
+        <Border MinWidth="300" Background="White" Padding="30" MaxWidth="300" CornerRadius="30" Height="250">
+            <StackPanel>
+                <TextBlock Text="Выберите ID" VerticalAlignment="Stretch" HorizontalAlignment="Center" FontSize="25"   Height="30"/>
+                <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  BorderThickness="1" BorderBrush="Gray" Height="117">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -43,8 +40,22 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+
+
+                <Grid x:Name="tyty" Height="35">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+
+                    </Grid.ColumnDefinitions>
+
+                    <Button  Content="Регистрация" Background="#8443D6" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0" Command="{Binding DeleteCommand, Mode=OneWay}"/>
+
+                </Grid>
             </StackPanel>
-            <Button Content="Удалить" Command="{Binding DeleteCommand, Mode=OneWay}" HorizontalAlignment="Center" Height="30" Style="{DynamicResource ButtonStyle}" Width="122" VerticalAlignment="Bottom" Margin="0,76,0,0"/>
-        </Grid>
+        </Border>
     </Grid>
 </Window>

@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
 using WpfApp4.ViewModel;
 
 namespace WpfApp4.View
@@ -40,7 +41,6 @@ namespace WpfApp4.View
                     _selectedUser = value;
                     OnPropertyChanged(nameof(SelectedUser));
                     (DeleteCommand as RelayCommand)?.RaiseCanExecuteChanged();
-                    UpdateRegistrationDate(); // Обновление RegistrationDate
                 }
             }
         }
@@ -88,27 +88,18 @@ namespace WpfApp4.View
             DeleteCommand = new RelayCommand(Delete, CanDelete);
             LoadUsersFromDatabase();
             SelectedUser = new UserModel(); // Проверьте, есть ли у вас конструктор по умолчанию
-            SelectedUser.RegistrationDate = new DateTime(1999, 1, 1); // Установка начальной даты
         }
 
-        private void UpdateRegistrationDate()
-        {
-            if (SelectedUser != null)
-            {
-                SelectedUser.RegistrationDate = new DateTime(1999, 1, 1); // Установка начальной даты при выборе нового пользователя
-                OnPropertyChanged(nameof(SelectedUser));
-            }
-        }
         private void LoadUsersFromDatabase()
         {
             try
             {
-                string connectionString = "Data Source=DESKTOP-D3VB68L;Initial Catalog=Users;Integrated Security=True";
+                string connectionString = "Data Source=localhost;Initial Catalog=User;Integrated Security=True";
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    string query = "SELECT UserID, Username, Password FROM Users1";
+                    string query = "SELECT id, login, password FROM users";
                     SqlCommand command = new SqlCommand(query, connection);
 
                     using (SqlDataReader reader = command.ExecuteReader())
@@ -117,9 +108,9 @@ namespace WpfApp4.View
                         {
                             Users.Add(new UserModel
                             {
-                                UserID = Convert.ToInt32(reader["UserID"]),
-                                Username = reader["Username"].ToString(),
-                                Password = reader["Password"].ToString(),
+                                UserID = Convert.ToInt32(reader["id"]),
+                                Username = reader["login"].ToString(),
+                                Password = reader["password"].ToString(),
                             });
                         }
                     }
@@ -134,26 +125,27 @@ namespace WpfApp4.View
 
         private void Edit(object parameter)
         {
-           
-                try
-                {
-                    string connectionString = "Data Source=DESKTOP-D3VB68L;Initial Catalog=Users;Integrated Security=True";
+            try
+            {
+                    string connectionString = "Data Source=localhost;Initial Catalog=User;Integrated Security=True";
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
 
-                    string updateQuery = "UPDATE Users1 SET Username = @NewUsername, Password = @NewPassword, RegistrationDate = @NewRegistrationDate WHERE UserID = @UserID";
+                    string updateQuery = "UPDATE users SET login = @NewUsername, password = @NewPassword WHERE id = @UserID";
                     SqlCommand updateCommand = new SqlCommand(updateQuery, connection);
                     updateCommand.Parameters.AddWithValue("@NewUsername", NewUsername);
                     updateCommand.Parameters.AddWithValue("@NewPassword", NewPassword);
-                    updateCommand.Parameters.AddWithValue("@NewRegistrationDate", SelectedUser.RegistrationDate);
                     updateCommand.Parameters.AddWithValue("@UserID", SelectedUser.UserID);
 
                     int rowsAffected = updateCommand.ExecuteNonQuery();
                         if (rowsAffected > 0)
                         {
                             MessageBox.Show("Пользователь успешно обновлен!");
-                            LoadUsersFromDatabase();
+                        DataWindow data = new DataWindow();
+                        data.Show();
+                        Application.Current.Windows[0].Close();
+                        LoadUsersFromDatabase();
                         }
                         else
                         {
@@ -173,12 +165,12 @@ namespace WpfApp4.View
         {
             try
             {
-                string connectionString = "Data Source=DESKTOP-D3VB68L;Initial Catalog=Users;Integrated Security=True";
+                string connectionString = "Data Source=localhost;Initial Catalog=User;Integrated Security=True";
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    string deleteQuery = "DELETE FROM Users1 WHERE UserID = @UserID";
+                    string deleteQuery = "DELETE FROM users WHERE id = @UserID";
                     SqlCommand deleteCommand = new SqlCommand(deleteQuery, connection);
                     deleteCommand.Parameters.AddWithValue("@UserID", SelectedUser.UserID);
 
@@ -188,6 +180,9 @@ namespace WpfApp4.View
                         MessageBox.Show("Пользователь успешно удален!");
                         Users.Remove(SelectedUser); // Удаление из коллекции после удаления из БД
                         SelectedUser = null; // Сброс выбранного пользователя после удаления
+                        DataWindow data = new DataWindow();
+                        data.Show();
+                        Application.Current.Windows[0].Close();
                     }
                     else
                     {

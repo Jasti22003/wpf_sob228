@@ -15,7 +15,6 @@ namespace WpfApp4
     {
         private UserModel _user; // Добавление объекта UserModel
         private RegisterViewModel _registerViewModel;
-        private bool isDarkTheme = true;
         private string _selectedTheme;
 
         public string SelectedTheme
@@ -78,13 +77,13 @@ namespace WpfApp4
         {
             try
             {
-                string connectionString = "Data Source=DESKTOP-D3VB68L;Initial Catalog=Users;Integrated Security=True";
+                string connectionString = "Data Source=localhost;Initial Catalog=User;Integrated Security=True";
                 {
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
 
-                        string loginQuary = "SELECT COUNT(*) FROM Users1 WHERE Username = @Username AND Password = @Password";
+                        string loginQuary = "SELECT COUNT(*) FROM users WHERE login = @Username AND password = @Password";
                         SqlCommand loginCommand = new SqlCommand(loginQuary, connection);
                         loginCommand.Parameters.AddWithValue("@Username", User.Username);
                         loginCommand.Parameters.AddWithValue("@Password", User.Password);

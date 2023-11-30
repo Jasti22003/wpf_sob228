@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,22 +11,18 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using WpfApp4.ViewModel;
-using System.IO;
 
 namespace WpfApp4.View
 {
     /// <summary>
-    /// Логика взаимодействия для DataWindow.xaml
+    /// Логика взаимодействия для AddWindow.xaml
     /// </summary>
-    public partial class DataWindow : Window
+    public partial class AddWindow : Window
     {
-        public DataWindow()
+        public AddWindow()
         {
             InitializeComponent();
-            DataContext = new DataViewModel(fd);
-            
+            DataContext = new RegisterViewModel();
         }
-        
     }
 }

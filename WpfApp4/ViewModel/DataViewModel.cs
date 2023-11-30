@@ -30,6 +30,7 @@ namespace WpfApp4.View
         public ICommand LoadDataCommand { get; private set; }
         public ICommand EditCommand { get; private set; }
         public ICommand DeleteCommand { get; private set; }
+        public ICommand AddCommand { get; private set; }
 
         public DataViewModel(DataGrid dataGrid) // Принимаем DataGrid в конструкторе
         {
@@ -42,6 +43,7 @@ namespace WpfApp4.View
             LoadDataCommand = new RelayCommand(LoadData);
             EditCommand = new RelayCommand(Edit);
             DeleteCommand = new RelayCommand(Delete);
+            AddCommand = new RelayCommand(Add);
 
             LoadData(null);
         }
@@ -50,12 +52,12 @@ namespace WpfApp4.View
         {
             try
             {
-                string connectionString = "Data Source=DESKTOP-D3VB68L;Initial Catalog=Users;Integrated Security=True";
+                string connectionString = "Data Source=localhost;Initial Catalog=User;Integrated Security=True";
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    string query = "SELECT UserID, Username, Password, RegistrationDate FROM Users1"; // Измените запрос на выборку нужных полей
+                    string query = "SELECT id, login, password FROM users"; // Измените запрос на выборку нужных полей
                     SqlCommand command = new SqlCommand(query, connection);
 
                     SqlDataAdapter adapter = new SqlDataAdapter(command);
@@ -68,11 +70,9 @@ namespace WpfApp4.View
                     {
                         Users.Add(new UserModel
                         {
-                            UserID = Convert.ToInt32(row["UserID"]),
-                            Username = row["Username"].ToString(),
-                            Password = row["Password"].ToString(),
-                            RegistrationDate = Convert.ToDateTime(row["RegistrationDate"])
-                            // Другие свойства UserModel, если они есть
+                            UserID = Convert.ToInt32(row["id"]),
+                            Username = row["login"].ToString(),
+                            Password = row["password"].ToString(),
                         });
                     }
 
@@ -99,7 +99,12 @@ namespace WpfApp4.View
             deleteWindow.Show();
             Application.Current.Windows[0].Close();
         }
-
+        private void Add(object parameter)
+        {
+            AddWindow register = new AddWindow();
+            register.Show();
+            Application.Current.Windows[0].Close();
+        }
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
