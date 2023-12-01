@@ -25,18 +25,116 @@
                 </Style>
             </Style.Resources>
         </Style>
+        <SolidColorBrush x:Key="ComboBoxContentBorder" Color="#8443D6"/>
+        <SolidColorBrush x:Key="ComboBoxContentBackground" Color="#8443D6"/>
+
+        <Style x:Key="ComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#8443D6"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+            <Grid>
+                <Border x:Name="ToggleButtonBorder" 
+                Background="{StaticResource ComboBoxContentBackground}" 
+                BorderBrush="{StaticResource ComboBoxContentBorder}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="2">
+                    <TextBlock Text="▼" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0"/>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#8443D6"/>
+            <Setter Property="BorderBrush" Value="#8443D6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource ComboBoxItemStyle}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                  Template="{StaticResource ComboBoxToggleButton}"
+                                  Grid.Column="2"
+                                  Focusable="false"
+                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                  ClickMode="Press" Foreground="White"/>
+                            <ContentPresenter x:Name="ContentSite"
+                                      IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                      Margin="3,3,23,3"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Left">
+                            </ContentPresenter>
+                            <TextBox x:Name="PART_EditableTextBox"
+                             Style="{x:Null}"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center"
+                             Focusable="True"
+                             Background="Transparent"
+                             Visibility="Hidden"
+                             IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                            <Popup x:Name="Popup"
+                           Placement="Bottom"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           PopupAnimation="Slide">
+                                <Grid x:Name="DropDown"
+                              SnapsToDevicePixels="True"
+                              MinWidth="{TemplateBinding ActualWidth}"
+                              MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder"
+                                    Background="{StaticResource ComboBoxContentBackground}"
+                                    BorderThickness="1"
+                                    BorderBrush="{StaticResource ComboBoxContentBorder}"
+                                    CornerRadius="2"/>
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                            </Trigger>
+                            <Trigger SourceName="Popup" Property="AllowsTransparency" Value="true">
+                                <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="4"/>
+                                <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
-    <Grid Background="#8443D6">
+    <Grid>
         <Border MinWidth="300" Background="White" Padding="30" MaxWidth="300" CornerRadius="30" Height="220">
             <StackPanel Height="200">
                 <TextBlock Text="Выберите id" VerticalAlignment="Bottom"/>
-                <ComboBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="UserID"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="25"/>
+                <ComboBox ItemsSource="{Binding Users}" Style="{StaticResource ComboBoxStyle}" 
+          SelectedItem="{Binding SelectedUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+         DisplayMemberPath="UserID" 
+          HorizontalAlignment="Center"  
+          VerticalAlignment="Center" 
+          Width="150" 
+          Height="25">
+                </ComboBox>
+               
                 <TextBlock Text="Изменить Логин" VerticalAlignment="Bottom" />
                 <TextBox Text="{Binding NewUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Text="Изменить Пароль" VerticalAlignment="Bottom"/>
                 <TextBox Text="{Binding NewPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
 
                 <Grid x:Name="tyty" Height="35">
                     <Grid.RowDefinitions>
@@ -45,11 +143,9 @@
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-
                     </Grid.ColumnDefinitions>
 
                     <Button  Content="Редактировать" Background="#8443D6" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0" Command="{Binding EditCommand}"/>
-
                 </Grid>
             </StackPanel>
         </Border>
